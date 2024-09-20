@@ -4,87 +4,134 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: const Home(),
-      theme: ThemeData(),
+    return MaterialApp(initialRoute: '/', onGenerateRoute: _generateRoute);
+  }
+
+  MaterialPageRoute? _generateRoute(RouteSettings settings) {
+    Widget? widget;
+    switch (settings.name) {
+      case HomeScreen.routeName:
+        widget = const HomeScreen();
+        break;
+      case SettingsScreen.routeName:
+        widget = const SettingsScreen();
+        break;
+      case ProfileScreen.routeName:
+        String userName = settings.arguments as String;
+        widget = ProfileScreen(userName: userName);
+        break;
+    }
+
+    if (widget != null) {
+      return MaterialPageRoute(builder: (context) => widget!);
+    }
+    return null;
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  static const String routeName = '/';
+
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Home'),
+      ),
+      body: Center(
+        child: Column(
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, SettingsScreen.routeName);
+              },
+              child: const Text('Settings'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, ProfileScreen.routeName,
+                    arguments: 'Rafat J');
+              },
+              child: const Text('Profile'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
 
-class Home extends StatelessWidget {
-  const Home({super.key});
+class ProfileScreen extends StatelessWidget {
+  static const String routeName = '/profile';
+
+  const ProfileScreen({super.key, required this.userName});
+
+  final String userName;
 
   @override
   Widget build(BuildContext context) {
-    // MediaQuery
-    print(MediaQuery.of(context).size);
-    print(MediaQuery.of(context).size.width);
-    print(MediaQuery.of(context).size.height);
-    print(MediaQuery.of(context).orientation);
-    print(MediaQuery.of(context).devicePixelRatio);
-    print(MediaQuery.of(context).displayFeatures);
-
-    print(MediaQuery.displayFeaturesOf(context));
-    print(MediaQuery.sizeOf(context));
-
+    print(userName);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.green,
-        title: const Text('Home'),
+        title: const Text('Profile'),
       ),
-      // body: Center(
-      //   child: Wrap(
-      //     alignment: WrapAlignment.center,
-      //     crossAxisAlignment: WrapCrossAlignment.start,
-      //     spacing: 4,
-      //     children: [
-      //       Text(MediaQuery.orientationOf(context).toString()),
-      //       Text(MediaQuery.orientationOf(context).toString()),
-      //       Text(MediaQuery.orientationOf(context).toString()),
-      //       Text(MediaQuery.orientationOf(context).toString()),
-      //       Text(MediaQuery.orientationOf(context).toString()),
-      //       Text(MediaQuery.orientationOf(context).toString()),
-      //       Text(MediaQuery.orientationOf(context).toString()),
-      //       Text(MediaQuery.orientationOf(context).toString()),
-      //       Text(MediaQuery.orientationOf(context).toString()),
-      //       Text(MediaQuery.orientationOf(context).toString()),
-      //     ],
-      //   ),
-      // ),
-      /* body: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          if (constraints.maxWidth < 400) {
-            return const Center(child: Text('Mobile'));
-          } else if (constraints.maxWidth < 600) {
-            return const Center(child: Text('Tablet'));
-          } else if (constraints.maxWidth < 1200) {
-            return const Center(child: Text('Laptop'));
-          }
+      body: Center(
+        child: Column(
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/', (route) => false);
+              },
+              child: const Text('Home'),
+            ),
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text('Settings'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
-          return const Center(child: Text('Desktop'));
-        },
-      ),*/
-      body: OrientationBuilder(
-        builder: (context, orientation) {
-          if (orientation == Orientation.landscape) {
-            return Container(
-              width: double.infinity,
-              height: double.infinity,
-              color: Colors.yellow,
-            );
-          } else {
-            return Container(
-              width: double.infinity,
-              height: double.infinity,
-              color: Colors.red,
-            );
-          }
-        },
+class SettingsScreen extends StatelessWidget {
+  static const String routeName = '/settings';
+
+  const SettingsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Settings'),
+      ),
+      body: Center(
+        child: Column(
+          children: [
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text('Profile'),
+            ),
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text('Home'),
+            ),
+          ],
+        ),
       ),
     );
   }
